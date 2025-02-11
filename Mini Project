@@ -1,1 +1,38 @@
+import pandas as pd
+from mlxtend.frequent_patterns import apriori
+from mlxtend.frequent_patterns import association_rules
+
+# Load the data
+df = pd.read_excel('http://archive.ics.uci.edu/ml/machine-learning-databases/00352/Online%20Retail.xlsx')
+
+# Data cleaning and preprocessing
+df['Description'] = df['Description'].str.strip()
+df.dropna(axis=0, subset=['InvoiceNo'], inplace=True)
+df['InvoiceNo'] = df['InvoiceNo'].astype('str')
+df = df[~df['InvoiceNo'].str.contains('C')]
+
+# Creating the basket DataFrame for France
+basket = (df[df['Country'] == "France"]
+          .groupby(['InvoiceNo', 'Description'])['Quantity']
+          .sum().unstack().reset_index().fillna(0)
+          .set_index('InvoiceNo'))
+
+# Function to encode units as boolean
+def encode_units(x):
+    return x >= 1
+
+# Apply encoding function and ensure DataFrame is of boolean type
+basket_sets = basket.applymap(encode_units).astype(bool)
+
+# Drop unnecessary column
+basket_sets.drop('POSTAGE', inplace=True, axis=1)
+
+# Generate frequent itemsets
+frequent_itemsets = apriori(basket_sets, min_support=0.07, use_colnames=True)
+
+# Generate association rules
+rules = association_rules(frequent_itemsets, metric="lift", min_threshold=1)
+
+# Display the rules
+print(rules.head())
 

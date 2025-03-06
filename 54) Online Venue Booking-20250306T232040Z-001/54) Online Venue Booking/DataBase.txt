@@ -1,0 +1,17 @@
+create user venue identified by venue;
+
+grant dba to venue;
+
+conn venue/venue;
+
+create table login(username varchar2(30) primary key,password varchar2(30),role varchar2(30));
+
+insert into login values('admin','admin','admin');
+
+create table user_reg(firstname varchar2(30),lastname varchar2(30),preaddress varchar2(100),peraddress varchar2(100),email varchar2(50),contact varchar2(15),role varchar2(30));
+
+create table provider_reg(firstname varchar2(30),lastname varchar2(30),preaddress varchar2(100),peraddress varchar2(100),email varchar2(50),contact varchar2(15),role varchar2(30));
+
+create table venuedetails(uname varchar2(30),vname varchar2(50),vaddress varchar2(200),cperson varchar2(50),cpnum varchar2(30),seating varchar2(200),dining varchar2(200),parking varchar2(200),other varchar2(200));
+
+create table venuestatus(uname varchar2(50),vname varchar2(50),fdate date,ldate date);
